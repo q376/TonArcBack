@@ -87,8 +87,9 @@ def wallet_login(auth: WalletAuth, db: Session = Depends(get_db)):
             ticket_balance=5  # Welcome bonus: 5 free tickets!
         )
         db.add(user)
+        db.flush()  # This assigns the user.id without committing
         
-        # Log welcome bonus
+        # Log welcome bonus - now user.id is available
         bonus_tx = TicketTransaction(
             user_id=user.id,
             wallet_raw=wallet_raw,
@@ -488,11 +489,6 @@ def health_check():
         "message": "TonArcade P2E API v2.0",
         "cors_enabled": True
     }
-
-# Add OPTIONS handler for preflight requests
-@app.options("/{full_path:path}")
-async def options_handler():
-    return {"status": "ok"}
 
 # Add OPTIONS handler for preflight requests
 @app.options("/{full_path:path}")
