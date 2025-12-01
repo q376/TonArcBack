@@ -493,3 +493,8 @@ def health_check():
 @app.options("/{full_path:path}")
 async def options_handler():
     return {"status": "ok"}
+
+# Add OPTIONS handler for preflight requests
+@app.options("/{full_path:path}")
+async def options_handler():
+    return {"status": "ok"}
