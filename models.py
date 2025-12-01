@@ -11,8 +11,8 @@ class User(Base):
     __tablename__ = "users"
     
     id = Column(Integer, primary_key=True, index=True)
-    wallet_raw = Column(String(64), unique=True, index=True, nullable=False)
-    wallet_user_friendly = Column(String(48), unique=True, index=True, nullable=False)
+    wallet_raw = Column(String, unique=True, index=True, nullable=False)
+    wallet_user_friendly = Column(String, unique=True, index=True, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     
     # Balance & Stats
@@ -23,7 +23,7 @@ class User(Base):
     
     # Flags
     is_banned = Column(Boolean, default=False)
-    ban_reason = Column(String(256), nullable=True)
+    ban_reason = Column(String, nullable=True)
 
 # ============= TICKET SYSTEM =============
 class TicketTransaction(Base):
@@ -31,16 +31,16 @@ class TicketTransaction(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    wallet_raw = Column(String(64), nullable=False)
+    wallet_raw = Column(String, nullable=False)
     
     # Transaction details
-    transaction_type = Column(String(20))  # 'purchase', 'spent', 'refund', 'bonus'
+    transaction_type = Column(String)  # 'purchase', 'spent', 'refund', 'bonus'
     amount = Column(Integer, nullable=False)  # Number of tickets (+/-)
     ton_amount = Column(Float, nullable=True)  # TON spent/earned (if applicable)
     
     # Metadata
-    description = Column(String(256))
-    transaction_hash = Column(String(64), nullable=True, index=True)  # Blockchain TX hash
+    description = Column(String)
+    transaction_hash = Column(String, nullable=True, index=True)  # Blockchain TX hash
     created_at = Column(DateTime, default=datetime.utcnow)
 
 # ============= GAME EVENTS =============
@@ -54,8 +54,8 @@ class GameEvent(Base):
     __tablename__ = "game_events"
     
     id = Column(Integer, primary_key=True, index=True)
-    event_name = Column(String(128), nullable=False)
-    game_type = Column(String(32), nullable=False)  # 'aim', 'color', 'reflex'
+    event_name = Column(String, nullable=False)
+    game_type = Column(String, nullable=False)  # 'aim', 'color', 'reflex'
     
     # Timing
     start_time = Column(DateTime, nullable=False)
@@ -86,7 +86,7 @@ class EventParticipation(Base):
     id = Column(Integer, primary_key=True, index=True)
     event_id = Column(Integer, ForeignKey("game_events.id", ondelete="CASCADE"))
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
-    wallet_raw = Column(String(64), nullable=False)
+    wallet_raw = Column(String, nullable=False)
     
     # Entry
     joined_at = Column(DateTime, default=datetime.utcnow)
@@ -104,11 +104,11 @@ class GameResult(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
-    wallet_raw = Column(String(64), nullable=False)
+    wallet_raw = Column(String, nullable=False)
     event_id = Column(Integer, ForeignKey("game_events.id", ondelete="SET NULL"), nullable=True)
     
     # Game details
-    game_name = Column(String(64), nullable=False)
+    game_name = Column(String, nullable=False)
     score = Column(Float, nullable=False)
     game_data = Column(JSON, nullable=True)  # Full game session data
     played_at = Column(DateTime, default=datetime.utcnow)
@@ -116,14 +116,14 @@ class GameResult(Base):
     # Anti-cheat
     is_validated = Column(Boolean, default=False)
     is_suspicious = Column(Boolean, default=False)
-    validation_notes = Column(String(512), nullable=True)
+    validation_notes = Column(String, nullable=True)
 
 # ============= TICKET PACKAGES =============
 class TicketPackage(Base):
     __tablename__ = "ticket_packages"
     
     id = Column(Integer, primary_key=True, index=True)
-    package_name = Column(String(64), nullable=False)
+    package_name = Column(String, nullable=False)
     ticket_amount = Column(Integer, nullable=False)
     price_ton = Column(Float, nullable=False)
     bonus_tickets = Column(Integer, default=0)  # Extra tickets as bonus
