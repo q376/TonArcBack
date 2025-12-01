@@ -18,14 +18,16 @@ engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 Base.metadata.create_all(bind=engine)
 
-# CORS
+# CORS - FIXED VERSION
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Change this line
+    allow_origins=[
+        "*"  # Allow all origins for now, or specify your domains
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-    expose_headers=["*"]  # Add this line
+    expose_headers=["*"]
 )
 
 def get_db():
@@ -102,8 +104,13 @@ def wallet_login(auth: WalletAuth, db: Session = Depends(get_db)):
         return {
             "message": "Welcome! You received 5 free tickets!",
             "user": {
-                "wallet": user.wallet_user_friendly,
+                "wallet_raw": user.wallet_raw,
+                "wallet_user_friendly": user.wallet_user_friendly,
                 "ticket_balance": user.ticket_balance,
+                "total_earned": user.total_earned,
+                "tournaments_won": user.tournaments_won,
+                "games_played": user.games_played,
+                "created_at": user.created_at.isoformat(),
                 "is_new": True
             }
         }
@@ -114,11 +121,13 @@ def wallet_login(auth: WalletAuth, db: Session = Depends(get_db)):
     return {
         "message": "Login successful",
         "user": {
-            "wallet": user.wallet_user_friendly,
+            "wallet_raw": user.wallet_raw,
+            "wallet_user_friendly": user.wallet_user_friendly,
             "ticket_balance": user.ticket_balance,
             "total_earned": user.total_earned,
             "tournaments_won": user.tournaments_won,
-            "games_played": user.games_played
+            "games_played": user.games_played,
+            "created_at": user.created_at.isoformat()
         }
     }
 
@@ -205,7 +214,8 @@ def get_events(status: Optional[str] = None, db: Session = Depends(get_db)):
                 "status": e.status.value,
                 "participants": e.total_participants,
                 "max_participants": e.max_participants,
-                "is_full": e.max_participants and e.total_participants >= e.max_participants
+                "is_full": e.max_participants and e.total_participants >= e.max_participants,
+                "is_paid_out": e.is_paid_out
             }
             for e in events
         ]
@@ -475,5 +485,11 @@ def distribute_prizes(event_id: int, db: Session = Depends(get_db)):
 def health_check():
     return {
         "status": "ok",
-        "message": "TonArcade P2E API v2.0"
+        "message": "TonArcade P2E API v2.0",
+        "cors_enabled": True
     }
+
+# Add OPTIONS handler for preflight requests
+@app.options("/{full_path:path}")
+async def options_handler():
+    return {"status": "ok"}
