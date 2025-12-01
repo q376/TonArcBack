@@ -22,6 +22,7 @@ Base.metadata.create_all(bind=engine)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        "*",
         "https://tonarc.netlify.app",      # Your production frontend
         "http://localhost:5173",            # Vite dev server
         "http://localhost:3000",            # Alternative dev port
