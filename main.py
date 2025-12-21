@@ -225,6 +225,7 @@ def get_db():
     finally:
         db.close()
 
+'''
 @app.post("/game/result", response_model=GameResultResponse)
 def save_game_result(result: GameResultCreate, db: Session = Depends(get_db)):
     # Проверяем, что пользователь существует
@@ -242,7 +243,7 @@ def save_game_result(result: GameResultCreate, db: Session = Depends(get_db)):
     db.refresh(new_result)
 
     return new_result
-
+'''
 # -------------------
 # Health check
 # -------------------
