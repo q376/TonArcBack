@@ -25,6 +25,7 @@ class User(Base):
     is_banned = Column(Boolean, default=False)
     ban_reason = Column(String, nullable=True)
 
+'''
 # ============= TICKET SYSTEM =============
 class TicketTransaction(Base):
     __tablename__ = "ticket_transactions"
@@ -129,3 +130,4 @@ class TicketPackage(Base):
     bonus_tickets = Column(Integer, default=0)  # Extra tickets as bonus
     is_active = Column(Boolean, default=True)
     display_order = Column(Integer, default=0)
+'''
