@@ -90,6 +90,7 @@ class TournamentCreateRequest(BaseModel):
     duration_hours: int
     prize_pool: float = 0
     max_participants: Optional[int] = None
+    start_delay_hours: float = 0  # NEW: Hours until tournament starts
 
 class ScoreSubmission(BaseModel):
     wallet: str
