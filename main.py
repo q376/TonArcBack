@@ -15,7 +15,7 @@ app = FastAPI(title="TonArcade API")
 
 # Redis connection
 REDIS_URL = os.getenv("REDIS_URL", "redis://red-d5eck9khg0os73988ao0:6379")
-ADMIN_SECRET = os.getenv("ADMIN_SECRET")
+ADMIN_SECRET = os.getenv("ADMIN_SECRET", "your_admin_secret_here")
 
 if not ADMIN_SECRET:
     raise ValueError("ADMIN_SECRET environment variable is required")
