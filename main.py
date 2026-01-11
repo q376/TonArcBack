@@ -42,7 +42,7 @@ class TournamentCreateRequest(BaseModel):
     duration_hours: int
     prize_pool: float = 0
     max_participants: Optional[int] = None
-    start_delay_hours: float = 0
+    start_timestamp: int  # NEW: Absolute Unix timestamp from client
 
 class ScoreSubmission(BaseModel):
     wallet: str
@@ -178,13 +178,13 @@ def admin_create_tournament(
     # Generate contract address
     contract_address = f"EQ{secrets.token_hex(32)}"
     
-    # Calculate timestamps (using CURRENT UTC time on server)
-    # Client timezone doesn't matter - we calculate relative to NOW
-    start_time = get_timestamp() + int(request.start_delay_hours * 3600)
+    # Use the timestamp provided by client (already in UTC)
+    start_time = request.start_timestamp
     end_time = start_time + (request.duration_hours * 3600)
     
     # Determine initial status
-    status = "upcoming" if request.start_delay_hours > 0 else "active"
+    now = get_timestamp()
+    status = "upcoming" if start_time > now else "active"
     
     # Store tournament
     redis_client.hset(f"tournament:{tournament_id}", mapping={
