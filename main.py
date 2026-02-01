@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, Header, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
-from datetime import datetime
+from datetime import datetime, timezone
 import redis
 import json
 import os
@@ -89,8 +89,10 @@ def format_tournament_data(tournament_dict, tournament_id):
         "game_type": tournament_dict.get("game_type"),
         "entry_fee_ton": float(tournament_dict.get("entry_fee_ton", 0)),
         "total_pool": float(tournament_dict.get("total_pool", 0)),
-        "start_time": datetime.fromtimestamp(int(tournament_dict.get("start_time", 0))).isoformat(),
-        "end_time": datetime.fromtimestamp(int(tournament_dict.get("end_time", 0))).isoformat(),
+        #"start_time": datetime.fromtimestamp(int(tournament_dict.get("start_time", 0))).isoformat(),
+        #"end_time": datetime.fromtimestamp(int(tournament_dict.get("end_time", 0))).isoformat(),
+        "start_time": datetime.fromtimestamp(int(tournament_dict.get("start_time", 0)), tz=timezone.utc).isoformat(),
+        "end_time": datetime.fromtimestamp(int(tournament_dict.get("end_time", 0)), tz=timezone.utc).isoformat(),
         "status": tournament_dict.get("status"),
         "total_participants": participant_count,
         "max_participants": int(tournament_dict.get("max_participants")) if tournament_dict.get("max_participants") else None,
